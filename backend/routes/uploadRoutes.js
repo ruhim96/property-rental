@@ -1,27 +1,13 @@
 const express = require('express');
-const multer = require('multer');
-const path = require('path');
+const { upload } = require('../config/cloudinary');
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination: './uploads/',
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${path.extname(file.originalname)}`);
-  }
-});
-
-const upload = multer({
-  storage,
-  fileFilter: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    if (['.jpg', '.jpeg', '.png', '.webp'].includes(ext)) cb(null, true);
-    else cb(new Error('Only images allowed'));
-  }
-});
-
 router.post('/', upload.array('images', 5), (req, res) => {
-  if (!req.files) return res.status(400).json({ message: 'No files' });
-  const urls = req.files.map(f => `/uploads/${f.filename}`);
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).json({ message: 'No files uploaded' });
+  }
+  
+  const urls = req.files.map(file => file.path); // Cloudinary returns URL in 'path'
   res.json({ urls });
 });
 
