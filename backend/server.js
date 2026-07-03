@@ -20,7 +20,7 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'http://localhost:5173',
-    'https://your-app-name.vercel.app',  // ← Replace with your actual Vercel URL later
+    'https://property-rental-delta.vercel.app',  // ← Replace with your actual Vercel URL later
     /\.vercel\.app$/  // Allows all Vercel preview deployments
   ],
   credentials: true
