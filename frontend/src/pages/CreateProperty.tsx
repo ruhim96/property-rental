@@ -1,4 +1,5 @@
-import { useState, FormEvent, ChangeEvent, CSSProperties } from 'react';
+import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api, { getApiError } from '../services/api';
 import type { CreatePropertyInput, Property, UploadResponse } from '../types';
@@ -15,19 +16,7 @@ export default function CreateProperty() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setForm(prev => ({
-      ...prev,
-      [name]: name === 'pricePerNight' ? Number(value) : value
-    }));
-  };
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFiles(e.target.files);
-  };
-
-  const submit = async (e: FormEvent) => {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!files || files.length === 0) {
       alert('Please upload at least one image');
@@ -36,12 +25,10 @@ export default function CreateProperty() {
 
     setLoading(true);
     try {
-      // Upload images
       const formData = new FormData();
       Array.from(files).forEach(f => formData.append('images', f));
       const uploadRes = await api.post<UploadResponse>('/upload', formData);
 
-      // Create property
       const { data } = await api.post<Property>('/properties', {
         ...form,
         images: uploadRes.data.urls
@@ -67,7 +54,7 @@ export default function CreateProperty() {
               name="title"
               placeholder="Cozy beachfront villa"
               value={form.title}
-              onChange={handleChange}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
               required 
             />
           </div>
@@ -78,7 +65,7 @@ export default function CreateProperty() {
               name="location"
               placeholder="Bali, Indonesia"
               value={form.location}
-              onChange={handleChange}
+              onChange={(e) => setForm({ ...form, location: e.target.value })}
               required 
             />
           </div>
@@ -90,7 +77,7 @@ export default function CreateProperty() {
               name="pricePerNight"
               placeholder="150"
               value={form.pricePerNight}
-              onChange={handleChange}
+              onChange={(e) => setForm({ ...form, pricePerNight: Number(e.target.value) })}
               min="1"
               required 
             />
@@ -102,7 +89,7 @@ export default function CreateProperty() {
               name="description"
               placeholder="Describe your property..."
               value={form.description}
-              onChange={handleChange}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={5}
               required 
             />
@@ -114,7 +101,7 @@ export default function CreateProperty() {
               type="file"
               multiple
               accept="image/*"
-              onChange={handleFileChange}
+              onChange={(e) => setFiles(e.target.files)}
               style={{ padding: '0.5rem' }}
             />
           </div>

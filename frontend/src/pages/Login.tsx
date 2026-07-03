@@ -1,4 +1,5 @@
-import { useState, FormEvent, ChangeEvent, CSSProperties } from 'react';
+import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api, { getApiError } from '../services/api';
@@ -10,11 +11,7 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const submit = async (e: FormEvent) => {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     try {
@@ -42,7 +39,7 @@ export default function Login() {
               name="email"
               placeholder="you@example.com"
               value={form.email}
-              onChange={handleChange}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
               required 
             />
           </div>
@@ -54,7 +51,7 @@ export default function Login() {
               name="password"
               placeholder="••••••••"
               value={form.password}
-              onChange={handleChange}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
               required 
             />
           </div>

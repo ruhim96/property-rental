@@ -1,8 +1,9 @@
-import { useState, FormEvent, ChangeEvent, CSSProperties } from 'react';
+import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api, { getApiError } from '../services/api';
-import type { RegisterInput, AuthResponse, UserRole } from '../types';
+import type { RegisterInput, AuthResponse } from '../types';
 
 export default function Register() {
   const [form, setForm] = useState<RegisterInput>({
@@ -15,11 +16,7 @@ export default function Register() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const submit = async (e: FormEvent) => {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     try {
@@ -47,7 +44,7 @@ export default function Register() {
               name="name"
               placeholder="John Doe"
               value={form.name}
-              onChange={handleChange}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
               required 
             />
           </div>
@@ -59,7 +56,7 @@ export default function Register() {
               name="email"
               placeholder="you@example.com"
               value={form.email}
-              onChange={handleChange}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
               required 
             />
           </div>
@@ -71,14 +68,18 @@ export default function Register() {
               name="password"
               placeholder="••••••••"
               value={form.password}
-              onChange={handleChange}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
               required 
             />
           </div>
           
           <div style={styles.inputGroup}>
             <label style={styles.label}>I want to...</label>
-            <select name="role" value={form.role} onChange={handleChange}>
+            <select 
+              name="role" 
+              value={form.role} 
+              onChange={(e) => setForm({ ...form, role: e.target.value as 'user' | 'property_lister' })}
+            >
               <option value="user">Book stays (Guest)</option>
               <option value="property_lister">List properties (Host)</option>
             </select>

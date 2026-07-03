@@ -1,4 +1,5 @@
-import { useEffect, useState, FormEvent, ChangeEvent, CSSProperties } from 'react';
+import { useEffect, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api, { getApiError } from '../services/api';
@@ -44,7 +45,7 @@ export default function PropertyDetail() {
     }
   };
 
-  const submitReview = async (e: FormEvent) => {
+  const submitReview = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await api.post('/reviews', reviewForm);
@@ -54,10 +55,6 @@ export default function PropertyDetail() {
     } catch (err) {
       alert(getApiError(err));
     }
-  };
-
-  const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setDates({ ...dates, [e.target.name]: e.target.value });
   };
 
   if (loading) return <div style={styles.loading}>Loading...</div>;
@@ -130,7 +127,7 @@ export default function PropertyDetail() {
                   <label>Rating</label>
                   <select 
                     value={reviewForm.rating} 
-                    onChange={e => setReviewForm({ ...reviewForm, rating: Number(e.target.value) })}
+                    onChange={(e) => setReviewForm({ ...reviewForm, rating: Number(e.target.value) })}
                   >
                     {[1,2,3,4,5].map(n => (
                       <option key={n} value={n}>{n} star{n>1?'s':''}</option>
@@ -142,7 +139,7 @@ export default function PropertyDetail() {
                   <textarea 
                     placeholder="Share your experience..."
                     value={reviewForm.comment} 
-                    onChange={e => setReviewForm({ ...reviewForm, comment: e.target.value })} 
+                    onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })} 
                     rows={4}
                     required 
                   />
@@ -167,7 +164,7 @@ export default function PropertyDetail() {
                   type="date" 
                   name="checkIn"
                   value={dates.checkIn} 
-                  onChange={handleDateChange}
+                  onChange={(e) => setDates({ ...dates, checkIn: e.target.value })}
                 />
               </div>
               <div style={styles.dateGroup}>
@@ -176,7 +173,7 @@ export default function PropertyDetail() {
                   type="date" 
                   name="checkOut"
                   value={dates.checkOut} 
-                  onChange={handleDateChange}
+                  onChange={(e) => setDates({ ...dates, checkOut: e.target.value })}
                 />
               </div>
               <button onClick={book} style={styles.bookButton}>
