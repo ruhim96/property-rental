@@ -1,4 +1,5 @@
-import { useEffect, useState, CSSProperties } from 'react';
+import { useEffect, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api, { getApiError } from '../services/api';
 import type { Booking, Property, User } from '../types';
@@ -15,16 +16,13 @@ export default function Dashboard() {
 
     const load = async () => {
       try {
-        // Always load guest bookings
         const bookingsRes = await api.get<Booking[]>('/bookings/my');
         setBookings(bookingsRes.data);
 
         if (user.role === 'property_lister' || user.role === 'admin') {
-          // Load incoming bookings for host's properties
           const hostBookingsRes = await api.get<Booking[]>('/bookings/host');
           setHostBookings(hostBookingsRes.data);
 
-          // Load host's properties
           const propsRes = await api.get<Property[]>('/properties');
           setMyProperties(propsRes.data.filter(p => {
             const ownerId = typeof p.owner === 'string' ? p.owner : p.owner._id;
@@ -92,7 +90,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* GUEST SECTION: My Bookings */}
       <section style={styles.section}>
         <h3 style={styles.sectionTitle}>🎫 My Bookings</h3>
         {bookings.length === 0 ? (
@@ -126,7 +123,6 @@ export default function Dashboard() {
         )}
       </section>
 
-      {/* HOST SECTION: Incoming Booking Requests */}
       {(user?.role === 'property_lister' || user?.role === 'admin') && (
         <section style={styles.section}>
           <h3 style={styles.sectionTitle}>📨 Incoming Booking Requests</h3>
@@ -176,7 +172,6 @@ export default function Dashboard() {
         </section>
       )}
 
-      {/* HOST SECTION: My Properties */}
       {(user?.role === 'property_lister' || user?.role === 'admin') && (
         <section style={styles.section}>
           <h3 style={styles.sectionTitle}>🏠 My Properties</h3>

@@ -1,4 +1,5 @@
-import { useEffect, useState, CSSProperties } from 'react';
+import { useEffect, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
 import type { Property } from '../types';
